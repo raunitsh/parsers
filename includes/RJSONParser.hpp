@@ -1,7 +1,7 @@
 #pragma once
 
-#include <unordered_map>
-#include "datatypes/RString.hpp"
+// #include <unordered_map>
+#include "RString.hpp"
 
 enum eJSONTokenType 
 {
@@ -18,15 +18,15 @@ enum eJSONTokenType
     JSON_NULL
 };
 
-std::unordered_map<RString, eJSONTokenType> gGetTokenFromLiteral = {
-    {"{",   JSON_LBRACE},
-    {"}",   JSON_RBRACE},
-    {"[",   JSON_LBRACKET},
-    {"]",   JSON_RBRACKET},
-    {",",   JSON_COMMA},
-    {":",   JSON_COLON},
-    {"\"",  JSON_QUOTE},
-};
+// std::unordered_map<RString, eJSONTokenType> gGetTokenFromLiteral = {
+//     {"{",   JSON_LBRACE},
+//     {"}",   JSON_RBRACE},
+//     {"[",   JSON_LBRACKET},
+//     {"]",   JSON_RBRACKET},
+//     {",",   JSON_COMMA},
+//     {":",   JSON_COLON},
+//     {"\"",  JSON_QUOTE},
+// };
 
 class JSONParser {
 
