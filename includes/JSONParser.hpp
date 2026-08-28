@@ -30,11 +30,15 @@ std::unordered_map<RString, eJSONTokenType> gGetTokenFromLiteral = {
 
 class JSONParser {
 
-    public:
+public:
 
             JSONParser  ();
             ~JSONParser ();
 
     bool    Parse       ();
 
+
+private:
+
+    
 };

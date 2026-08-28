@@ -1,11 +1,20 @@
-#include "datatypes/RString.hpp"
+#include "Loader.hpp"
+#include "JSONParser.hpp"
 
 int
 main ()
 {
-        RString s;
-    
-    s.SetString ("raunit");
+        Loader loader;
+        RString path;
+        bool rc;
 
+    path.SetString ("../test.json");
+
+    loader.OpenFileRO ();
+    
+    rc = loader.ParseFile<JSONParser> ();
+    
+    printf ("%d\n", rc);
+    
     return 0;
 }
