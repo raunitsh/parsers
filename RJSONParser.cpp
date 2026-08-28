@@ -1,17 +1,27 @@
 #include "RJSONParser.hpp"
 
-JSONParser::JSONParser ()
+RJSONParser::RJSONParser (RLoader* pLoader)
 {
-
+    vLoader = pLoader;
 }
 
-JSONParser::~JSONParser ()
+RJSONParser::~RJSONParser ()
 {
     
 }
 
 bool
-JSONParser::Parse ()
+RJSONParser::Parse ()
 {
+        int c;
+        char ch;
+    
+    while ((c = vLoader->ReadAndAdvance ()) != EOF)
+    {
+        ch = (char)c;
+        
+        putchar (ch);
+    }
+
     return true;
 }

@@ -1,7 +1,8 @@
 #pragma once
 
 // #include <unordered_map>
-#include "RString.hpp"
+#include "RCppUtilsLib.hpp"
+#include "RFileUtilsLib.hpp"
 
 enum eJSONTokenType 
 {
@@ -28,17 +29,17 @@ enum eJSONTokenType
 //     {"\"",  JSON_QUOTE},
 // };
 
-class JSONParser {
+class RJSONParser {
 
 public:
 
-            JSONParser  ();
-            ~JSONParser ();
+                RJSONParser     (RLoader * pLoader);
+                ~RJSONParser    ();
 
-    bool    Parse       ();
+    bool        Parse           ();
 
 
 private:
 
-    
+    RLoader*    vLoader;
 };
