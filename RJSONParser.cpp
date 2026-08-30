@@ -23,7 +23,14 @@ RJSONParser::Parse ()
 
     vRootObj = InternalParseObject ();
 
+    vLoader->SetParserResult (vRootObj);
     return true;
+}
+
+const RJSONObject*
+RJSONParser::GetJSONObject ()
+{
+    return vRootObj;
 }
 
 void
@@ -45,7 +52,7 @@ RJSONParser::InternalReadAndAdvance ()
     ch = (char) c;
     vToken = ch;
 
-    if (vToken >= '0' && vToken <= '9')
+    if (vToken == '-' || (vToken >= '0' && vToken <= '9'))
     {
         vTokenType = eJSONTokenType::JSON_NUMBER;
         return;
@@ -93,6 +100,7 @@ RJSONParser::InternalParseObjectMembers (RJSONObject* pObj)
         // Comma
         if (vToken == gLiteralFromToken [eJSONTokenType::JSON_COMMA])
         {
+            InternalReadAndAdvance ();
             continue;
         }
 
@@ -158,6 +166,12 @@ RJSONParser::InternalParsemMemberValue ()
         val->uType = eRJSONValueType::RJSON_BOOL_VAL;
         val->uBoolVal = false;
 
+        // parse false
+        while (vToken != 'e')
+        {
+            InternalReadAndAdvance ();
+        }
+
         return val;
     }
 
@@ -167,6 +181,11 @@ RJSONParser::InternalParsemMemberValue ()
         val->uType = eRJSONValueType::RJSON_BOOL_VAL;
         val->uBoolVal = true;
         
+        // parse true
+        while (vToken != 'e')
+        {
+            InternalReadAndAdvance ();
+        }
         return val;
     }
 
@@ -187,20 +206,24 @@ RJSONParser::InternalParsemMemberValue ()
 
         while (vTokenType != eJSONTokenType::JSON_RBRACKET)
         {
+            InternalReadAndAdvance ();
+
             val->uArrayVal->uElements.push_back (InternalParsemMemberValue ());
             
             InternalReadAndAdvance ();
-
-            // if (vToken == gLiteralFromToken [eJSONTokenType::JSON_COMMA])
-            // {
-            //     continue;
-            // }
+            // Comma
+            if (vToken == gLiteralFromToken [eJSONTokenType::JSON_COMMA])
+            {
+                // InternalReadAndAdvance ();
+                continue;
+            }
         }
 
         return val;
     }
 
     // todo null
+    return nullptr;
 }
 
 RString*
@@ -265,8 +288,6 @@ RJSONParser::InternalParseNumber ()
             }
         }
     }
-
-    InternalReadAndAdvance ();
 
     return res * sign;
 }
