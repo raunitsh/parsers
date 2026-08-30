@@ -1,9 +1,8 @@
 #include "RJSONParser.hpp"
 
-RJSONParser::RJSONParser (RLoader* pLoader, RJSONLexer* pLexer)
+RJSONParser::RJSONParser (RLoader* pLoader)
 {
     vLoader = pLoader;
-    vLexer = pLexer;
 }
 
 RJSONParser::~RJSONParser ()

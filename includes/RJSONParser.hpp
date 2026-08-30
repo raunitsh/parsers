@@ -2,7 +2,6 @@
 
 // #include <unordered_map>
 #include "RFileUtilsLib.hpp"
-#include "RJSONLexer.hpp"
 
 #include <vector>
 
@@ -22,23 +21,6 @@ enum eJSONTokenType
     JSON_UNKNOWN,
     JSON_EOF
 };
-
-// std::unordered_map<eJSONTokenType, RString> gTokenName =
-// {
-//     {JSON_LBRACE    , "JSON_LBRACE"},
-//     {JSON_RBRACE    , "JSON_RBRACE"},
-//     {JSON_LBRACKET  , "JSON_LBRACKET"},
-//     {JSON_RBRACKET  , "JSON_RBRACKET"},
-//     {JSON_COMMA     , "JSON_COMMA"},
-//     {JSON_COLON     , "JSON_COLON"},
-//     {JSON_QUOTE     , "JSON_QUOTE"},
-//     {JSON_NUMBER    , "JSON_NUMBER"},
-//     {JSON_TRUE      , "JSON_TRUE"},
-//     {JSON_FALSE     , "JSON_FALSE"},
-//     {JSON_NULL      , "JSON_NULL"},
-//     {JSON_UNKNOWN   , "JSON_UNKNOWN"},
-//     {JSON_EOF       , "JSON_EOF"}
-// };
 
 inline std::unordered_map<char, eJSONTokenType> gTokenFromLiteral = 
 {
@@ -140,7 +122,7 @@ class RJSONParser {
 
 public:
 
-                        RJSONParser                 (RLoader * pLoader, RJSONLexer* pLexer);
+                        RJSONParser                 (RLoader * pLoader);
                         ~RJSONParser                ();
 
     bool                Parse                       ();
@@ -158,7 +140,6 @@ private:
     double              InternalParseNumber         ();
 
     RLoader*            vLoader;
-    RJSONLexer*         vLexer;
     char                vToken;
     eJSONTokenType      vTokenType;
     RJSONObject*        vRootObj;
