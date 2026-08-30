@@ -1,6 +1,5 @@
 #pragma once
 
-// #include <unordered_map>
 #include "RFileUtilsLib.hpp"
 
 #include <vector>
@@ -63,40 +62,28 @@ struct RJSONMember;
 
 struct RJSONObject
 {
+    ~RJSONObject ();
+
     std::vector<RJSONMember*> uMembers;
 };
 
 struct RJSONArray 
 {
+    ~RJSONArray ();
+
     std::vector<RJSONValue*> uElements;
 };
 
 struct RJSONValue
 {
+    ~RJSONValue ();
+
     eRJSONValueType          uType;
     RString*                 uStringVal  = nullptr;
     double                   uNumVal     = 0.0;
     bool                     uBoolVal    = false;
     RJSONObject*             uObjVal     = nullptr;
     RJSONArray*              uArrayVal   = nullptr;
-
-    ~RJSONValue ()
-    {
-        if (uObjVal)
-        {
-            delete uObjVal;
-        }
-
-        if (uArrayVal)
-        {
-            delete uArrayVal;
-        } 
-
-        if (uStringVal)
-        {
-            delete uStringVal;
-        }
-    }
 };
 
 struct RJSONMember
@@ -104,18 +91,7 @@ struct RJSONMember
     RString*                uKey = nullptr;
     RJSONValue*             uValue = nullptr;
 
-    ~RJSONMember ()
-    {
-        if (uValue)
-        {
-            delete uValue;
-        }
-
-        if (uKey)
-        {
-            delete uKey;
-        }
-    }
+    ~RJSONMember ();
 };
 
 class RJSONParser {
@@ -144,3 +120,36 @@ private:
     eJSONTokenType      vTokenType;
     RJSONObject*        vRootObj;
 };
+
+inline RJSONObject::~RJSONObject ()
+{
+    for (RJSONMember* member : uMembers)
+    {
+        if (member) delete member;
+    }
+
+    uMembers.clear ();
+}
+
+inline RJSONArray::~RJSONArray ()
+{
+    for (RJSONValue* element : uElements)
+    {
+        if (element) delete element;
+    }
+
+    uElements.clear ();
+}
+
+inline RJSONValue::~RJSONValue ()
+{
+    if (uObjVal)    delete uObjVal;
+    if (uArrayVal)  delete uArrayVal;
+    if (uStringVal) delete uStringVal;
+}
+
+inline RJSONMember::~RJSONMember ()
+{
+    if (uValue) delete uValue;
+    if (uKey)   delete uKey;
+}
