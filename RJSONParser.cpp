@@ -75,6 +75,10 @@ RJSONParser::InternalParseObject ()
 
     rc = InternalParseObjectMembers (obj);
 
+    // Till now vToken = }
+    // After below call either EOF or ,
+    InternalReadAndAdvance ();
+
     if (rc)
         return obj;
 
@@ -95,8 +99,7 @@ RJSONParser::InternalParseObjectMembers (RJSONObject* pObj)
     {
         InternalParseObjectMember (pObj);
         
-        InternalReadAndAdvance ();
-        
+        // InternalReadAndAdvance ();
         // Comma
         if (vToken == gLiteralFromToken [eJSONTokenType::JSON_COMMA])
         {
@@ -123,7 +126,7 @@ RJSONParser::InternalParseObjectMember (RJSONObject* pObj)
 
     kv->uKey = InternalParseString ();
 
-    InternalReadAndAdvance ();
+    // InternalReadAndAdvance ();
     // Colon
     if (vToken != gLiteralFromToken [eJSONTokenType::JSON_COLON])
     {
@@ -172,6 +175,9 @@ RJSONParser::InternalParsemMemberValue ()
             InternalReadAndAdvance ();
         }
 
+        // Consume comma
+        InternalReadAndAdvance ();
+
         return val;
     }
 
@@ -186,6 +192,10 @@ RJSONParser::InternalParsemMemberValue ()
         {
             InternalReadAndAdvance ();
         }
+        
+        // Consume comma
+        InternalReadAndAdvance ();
+        
         return val;
     }
 
@@ -210,7 +220,7 @@ RJSONParser::InternalParsemMemberValue ()
 
             val->uArrayVal->uElements.push_back (InternalParsemMemberValue ());
             
-            InternalReadAndAdvance ();
+            // InternalReadAndAdvance ();
             // Comma
             if (vToken == gLiteralFromToken [eJSONTokenType::JSON_COMMA])
             {
@@ -218,6 +228,10 @@ RJSONParser::InternalParsemMemberValue ()
                 continue;
             }
         }
+
+        // Till now vToken = ]
+        // After below, either EOF or ,
+        InternalReadAndAdvance ();
 
         return val;
     }
@@ -239,6 +253,9 @@ RJSONParser::InternalParseString ()
             str->Append (vToken);
     }
     while (vToken != gLiteralFromToken [eJSONTokenType::JSON_QUOTE]);
+
+    // Consume comma
+    InternalReadAndAdvance ();
 
     return str;
 }
