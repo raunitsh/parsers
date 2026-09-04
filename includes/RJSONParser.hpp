@@ -4,95 +4,15 @@
 
 #include <vector>
 
-enum eJSONTokenType 
-{
-    JSON_LBRACE,
-    JSON_RBRACE,
-    JSON_LBRACKET,
-    JSON_RBRACKET,
-    JSON_COMMA,
-    JSON_COLON,
-    JSON_QUOTE,
-    JSON_NUMBER,
-    JSON_TRUE,
-    JSON_FALSE,
-    JSON_NULL,
-    JSON_UNKNOWN,
-    JSON_EOF
-};
-
-inline std::unordered_map<char, eJSONTokenType> gTokenFromLiteral = 
-{
-    {'{',   JSON_LBRACE},
-    {'}',   JSON_RBRACE},
-    {'[',   JSON_LBRACKET},
-    {']',   JSON_RBRACKET},
-    {',',   JSON_COMMA},
-    {':',   JSON_COLON},
-    {'"',   JSON_QUOTE},
-    {'f',   JSON_FALSE},
-    {'t',   JSON_TRUE},
-    {'n',   JSON_NULL},
-};
-
-inline std::unordered_map<eJSONTokenType, char> gLiteralFromToken = 
-{
-    {JSON_LBRACE,   '{',},
-    {JSON_RBRACE,   '}',},
-    {JSON_LBRACKET, '[',},
-    {JSON_RBRACKET, ']',},
-    {JSON_COMMA,    ',',},
-    {JSON_COLON,    ':',},
-    {JSON_QUOTE,    '"'},
-};
-
-enum eRJSONValueType 
-{
-    RJSON_OBJECT_VAL,
-    RJSON_ARRAY_VAL,
-    RJSON_BOOL_VAL,
-    RJSON_NUM_VAL,
-    RJSON_STR_VAL,
-    RJSON_NULL_VAL
-};
-
 struct RJSONValue;
 struct RJSONObject;
 struct RJSONMember;
+struct RJSONArray;
 
-struct RJSONObject
-{
-    ~RJSONObject ();
-
-    std::vector<RJSONMember*> uMembers;
-};
-
-struct RJSONArray 
-{
-    ~RJSONArray ();
-
-    std::vector<RJSONValue*> uElements;
-};
-
-struct RJSONValue
-{
-    ~RJSONValue ();
-
-    eRJSONValueType          uType;
-    RString*                 uStringVal  = nullptr;
-    double                   uNumVal     = 0.0;
-    bool                     uBoolVal    = false;
-    RJSONObject*             uObjVal     = nullptr;
-    RJSONArray*              uArrayVal   = nullptr;
-};
-
-struct RJSONMember
-{
-    RString*                 uKey = nullptr;
-    RJSONValue*              uValue = nullptr;
-
-    ~RJSONMember ();
-};
+#include "RJSONTypes.hpp"
+#include "RJSONObject.hpp"
+#include "RJSONValue.hpp"
+#include "RJSONArray.hpp"
 
 class RJSONParser {
 
@@ -120,36 +40,3 @@ private:
     eJSONTokenType      vTokenType;
     RJSONObject*        vRootObj;
 };
-
-inline RJSONObject::~RJSONObject ()
-{
-    for (RJSONMember* member : uMembers)
-    {
-        if (member) delete member;
-    }
-
-    uMembers.clear ();
-}
-
-inline RJSONArray::~RJSONArray ()
-{
-    for (RJSONValue* element : uElements)
-    {
-        if (element) delete element;
-    }
-
-    uElements.clear ();
-}
-
-inline RJSONValue::~RJSONValue ()
-{
-    if (uObjVal)    delete uObjVal;
-    if (uArrayVal)  delete uArrayVal;
-    if (uStringVal) delete uStringVal;
-}
-
-inline RJSONMember::~RJSONMember ()
-{
-    if (uValue) delete uValue;
-    if (uKey)   delete uKey;
-}

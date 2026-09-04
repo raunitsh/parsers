@@ -124,9 +124,10 @@ RJSONParser::InternalParseObjectMembers (RJSONObject* pObj)
 void
 RJSONParser::InternalParseObjectMember (RJSONObject* pObj)
 {
-        RJSONMember* kv = new RJSONMember ();
+        RString*    key = nullptr;
+        RJSONValue* val = nullptr;
 
-    kv->uKey = InternalParseString ();
+    key = InternalParseString ();
 
     // InternalReadAndAdvance ();
     // Colon
@@ -137,9 +138,9 @@ RJSONParser::InternalParseObjectMember (RJSONObject* pObj)
 
     InternalReadAndAdvance ();
 
-    kv->uValue = InternalParseMemberValue ();
+    val = InternalParseMemberValue ();
 
-    pObj->uMembers.push_back (kv);
+    pObj->uMembers [*key] = val;
 }
 
 RJSONValue*
