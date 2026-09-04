@@ -88,8 +88,8 @@ struct RJSONValue
 
 struct RJSONMember
 {
-    RString*                uKey = nullptr;
-    RJSONValue*             uValue = nullptr;
+    RString*                 uKey = nullptr;
+    RJSONValue*              uValue = nullptr;
 
     ~RJSONMember ();
 };
@@ -106,12 +106,12 @@ public:
 
 private:
 
-    void                InternalReadAndAdvance      ();
+    void                InternalReadAndAdvance      (bool pSkipSpaces = true);
     RJSONObject*        InternalParseObject         ();
     bool                InternalParseObjectMembers  (RJSONObject* pObj);
     void                InternalSkipWhiteSpaces     (int& pC);
     void                InternalParseObjectMember   (RJSONObject* pObj);
-    RJSONValue*         InternalParsemMemberValue   ();
+    RJSONValue*         InternalParseMemberValue    ();
     RString*            InternalParseString         ();
     double              InternalParseNumber         ();
 

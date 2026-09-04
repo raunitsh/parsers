@@ -33,14 +33,17 @@ RJSONParser::GetJSONObject ()
 }
 
 void
-RJSONParser::InternalReadAndAdvance ()
+RJSONParser::InternalReadAndAdvance (bool pSkipSpaces)
 {
         int c;
         char ch;
 
     c = vLoader->ReadByteAndAdvance ();
 
-    InternalSkipWhiteSpaces (c);
+    if (pSkipSpaces)
+    {
+        InternalSkipWhiteSpaces (c);
+    }
 
     if (c == EOF)
     {
@@ -59,7 +62,7 @@ RJSONParser::InternalReadAndAdvance ()
     
     if (gTokenFromLiteral.find (ch) == gTokenFromLiteral.end ())
     {
-        vTokenType = JSON_UNKNOWN;
+        vTokenType = eJSONTokenType::JSON_UNKNOWN;
         return;
     }
 
@@ -134,13 +137,13 @@ RJSONParser::InternalParseObjectMember (RJSONObject* pObj)
 
     InternalReadAndAdvance ();
 
-    kv->uValue = InternalParsemMemberValue ();
+    kv->uValue = InternalParseMemberValue ();
 
     pObj->uMembers.push_back (kv);
 }
 
 RJSONValue*
-RJSONParser::InternalParsemMemberValue ()
+RJSONParser::InternalParseMemberValue ()
 {
         RJSONValue* val = new RJSONValue ();
     
@@ -217,7 +220,7 @@ RJSONParser::InternalParsemMemberValue ()
         {
             InternalReadAndAdvance ();
 
-            val->uArrayVal->uElements.push_back (InternalParsemMemberValue ());
+            val->uArrayVal->uElements.push_back (InternalParseMemberValue ());
             
             // InternalReadAndAdvance ();
             // Comma
@@ -244,14 +247,44 @@ RJSONParser::InternalParseString ()
 {
         RString* str = new RString ("");
 
-    do 
+    while (true)
     {
-        InternalReadAndAdvance ();
+        // Begin string
+        InternalReadAndAdvance (/*pSkipSpaces*/ false);
 
-        if (vToken != gLiteralFromToken [eJSONTokenType::JSON_QUOTE])
+        // String ends
+        if (vTokenType == eJSONTokenType::JSON_QUOTE)
+        {
+            break;
+        }
+
+        // Escaped char
+        if (vToken == '\\')
+        {
+            InternalReadAndAdvance (/*pSkipSpaces*/ false);
+
+            switch (vToken)
+            {
+                case '"':   str->Append ('"');  break; 
+                case '\\':  str->Append ('\\'); break; 
+                case '/':   str->Append ('/');  break; 
+                case 'b':   str->Append ('\b'); break; 
+                case 'f':   str->Append ('\f'); break; 
+                case 'n':   str->Append ('\n'); break; 
+                case 'r':   str->Append ('\r'); break; 
+                case 't':   str->Append ('\t'); break; 
+                
+                default:
+                    str->Append (vToken);
+                    break;
+            }
+        } 
+        // Normal char
+        else
+        {
             str->Append (vToken);
+        } 
     }
-    while (vToken != gLiteralFromToken [eJSONTokenType::JSON_QUOTE]);
 
     // Consume comma
     InternalReadAndAdvance ();
